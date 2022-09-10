@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "visualstudioexptteam.vscodeintellicode",
+        "dbaeumer.vscode-eslint",
+        "angelorafael.jsx-html-tags"
+    ]
+}
