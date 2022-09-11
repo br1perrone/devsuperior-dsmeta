@@ -9,6 +9,7 @@ import "./styles.css"
 import axios from "axios"
 import { BASE_URL } from "../../utils/request"
 import { Sale } from "../../models/sale"
+import { toast } from "react-toastify"
 
 const SalesCard = () => {
   registerLocale('pt-BR', pt_BR)
@@ -28,6 +29,10 @@ const SalesCard = () => {
     axios.get(`${BASE_URL}/sales?minDate=${dmin}&maxDate=${dmax}`)
       .then(res => {
         setSales(res.data.content)
+      })
+      .catch(err => {
+        toast.warn("Falha ao carregar lista.")
+        console.warn(err)
       })
   }, [minDate, maxDate])
 
