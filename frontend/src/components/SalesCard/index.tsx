@@ -18,6 +18,7 @@ const SalesCard = () => {
   const min = new Date(new Date().setDate(new Date().getDate() - 365))
   const max = new Date()
 
+  const [loading, setLoading] = useState(true)
   const [minDate, setMinDate] = useState(min)
   const [maxDate, setMaxDate] = useState(max)
   const [sales, setSales] = useState<Sale[]>([])
@@ -26,6 +27,7 @@ const SalesCard = () => {
     const dmin = minDate.toISOString().slice(0, 10)
     const dmax = maxDate.toISOString().slice(0, 10)
 
+    setLoading(true)
     axios.get(`${BASE_URL}/sales?minDate=${dmin}&maxDate=${dmax}`)
       .then(res => {
         setSales(res.data.content)
@@ -34,6 +36,7 @@ const SalesCard = () => {
         toast.warn("Falha ao carregar lista.")
         console.warn(err)
       })
+    setLoading(false)
   }, [minDate, maxDate])
 
   return (
@@ -59,37 +62,41 @@ const SalesCard = () => {
       </div>
 
       <div>
-        <table className="dsmeta-sales-table">
-          <thead>
-            <tr>
-              <th className="show992">ID</th>
-              <th className="show576">Data</th>
-              <th>Vendedor</th>
-              <th className="show992">Visitas</th>
-              <th className="show992">Vendas</th>
-              <th>Total</th>
-              <th>Notificar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sales && sales.map((sale, key) => (
-              <tr key={key}>
-                <td className="show992">#{sale.id}</td>
-                <td className="show576">{new Date(sale.date).toLocaleDateString()}</td>
-                <td>{sale.sellerName}</td>
-                <td className="show992">{sale.visited}</td>
-                <td className="show992">{sale.deals}</td>
-                <td>R$ {sale.amount.toFixed(2)}</td>
-                <td>
-                  <div className="dsmeta-red-btn-container">
-                    <NotificationButton saleId={sale.id} />
-                  </div>
-                </td>
+        {loading
+          ? <p>Carregando</p>
+          : // tabela de vendas
+          <table className="dsmeta-sales-table">
+            <thead>
+              <tr>
+                <th className="show992">ID</th>
+                <th className="show576">Data</th>
+                <th>Vendedor</th>
+                <th className="show992">Visitas</th>
+                <th className="show992">Vendas</th>
+                <th>Total</th>
+                <th>Notificar</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
+            <tbody>
+              {sales && sales.map((sale, key) => (
+                <tr key={key}>
+                  <td className="show992">#{sale.id}</td>
+                  <td className="show576">{new Date(sale.date).toLocaleDateString()}</td>
+                  <td>{sale.sellerName}</td>
+                  <td className="show992">{sale.visited}</td>
+                  <td className="show992">{sale.deals}</td>
+                  <td>R$ {sale.amount.toFixed(2)}</td>
+                  <td>
+                    <div className="dsmeta-red-btn-container">
+                      <NotificationButton saleId={sale.id} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
 
-        </table>
+          </table>
+        }
       </div>
 
     </div>
